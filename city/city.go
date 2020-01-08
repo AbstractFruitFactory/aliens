@@ -1,8 +1,11 @@
 package city
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
+	"os"
+	"strings"
 )
 
 type CityMap struct {
@@ -121,5 +124,75 @@ func (cityMap CityMap) Invade(nbrOfAliens int) {
 	aliens := assignInvaders(nbrOfAliens, cityMap)
 	for checkMoveCount(aliens) && len(aliens) > 1 {
 		iterateInvasion(&cityMap.Cities, &aliens)
+	}
+}
+
+func BuildCityMap(filePath string) CityMap {
+	file, err := os.Open(filePath)
+	checkErr(err)
+	defer file.Close()
+
+	cityMap := CityMap{}
+	cityMap.Cities = map[string]*City{}
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		lineData := strings.Split(line, " ")
+		cityName := lineData[0]
+		var neighborNorth *City
+		var neighborEast *City
+		var neighborSouth *City
+		var neighborWest *City
+
+		for i := 1; i < len(lineData); i++ {
+			neighborData := strings.Split(lineData[i], "=")
+			direction := neighborData[0]
+			neighborCityName := neighborData[1]
+
+			var neighborCity *City
+
+			if !cityMap.HasCity(neighborCityName) {
+				cityMap.Cities[neighborCityName] = &City{Name: neighborCityName}
+				cityMap.Cities[neighborCityName].Invaders = map[int]*Alien{}
+			}
+
+			neighborCity = cityMap.Cities[neighborCityName]
+
+			switch direction {
+			case "north":
+				neighborNorth = neighborCity
+			case "east":
+				neighborEast = neighborCity
+			case "south":
+				neighborSouth = neighborCity
+			case "west":
+				neighborWest = neighborCity
+			}
+		}
+
+		if !cityMap.HasCity(cityName) {
+			cityMap.Cities[cityName] = &City{
+				Name:  cityName,
+				North: neighborNorth,
+				East:  neighborEast,
+				South: neighborSouth,
+				West:  neighborWest,
+			}
+			cityMap.Cities[cityName].Invaders = map[int]*Alien{}
+		} else {
+			cityMap.Cities[cityName].North = neighborNorth
+			cityMap.Cities[cityName].East = neighborEast
+			cityMap.Cities[cityName].South = neighborSouth
+			cityMap.Cities[cityName].West = neighborWest
+		}
+	}
+
+	return cityMap
+}
+
+func checkErr(e error) {
+	if e != nil {
+		panic(e)
 	}
 }
