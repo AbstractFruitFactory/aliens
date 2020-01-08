@@ -27,7 +27,7 @@ func setInfo() {
 		nbrOfAliens, err := strconv.Atoi(input)
 
 		if err != nil || nbrOfAliens < 1 {
-			panic(errors.New("Invalid input. Must be an positive integer."))
+			panic(errors.New("Invalid input. Must be a positive integer."))
 		}
 
 		cityMap := buildCityMap("./example.txt")

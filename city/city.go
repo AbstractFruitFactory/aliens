@@ -91,7 +91,6 @@ func (cityMap CityMap) Invade(nbrOfAliens int) {
 	aliens := map[int]*Alien{}
 
 	for i := 0; i < nbrOfAliens; i++ {
-		//startingPoint := rand.Intn(len(cityMap.Cities))
 		var startingCity *City
 		alien := &Alien{i, startingCity, 0}
 
