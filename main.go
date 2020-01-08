@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
-	"github.com/alexmedkex/aliens/graph"
+	"github.com/alexmedkex/aliens/city"
 	"github.com/urfave/cli"
 	"os"
 	"strconv"
@@ -37,34 +37,34 @@ func setInfo() {
 	}
 }
 
-func buildCityMap(filePath string) graph.CityMap {
+func buildCityMap(filePath string) city.CityMap {
 	file, err := os.Open(filePath)
 	checkErr(err)
 	defer file.Close()
 
-	cityMap := graph.CityMap{}
-	cityMap.Cities = map[string]*graph.City{}
+	cityMap := city.CityMap{}
+	cityMap.Cities = map[string]*city.City{}
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		lineData := strings.Split(line, " ")
 		cityName := lineData[0]
-		var neighborNorth *graph.City
-		var neighborEast *graph.City
-		var neighborSouth *graph.City
-		var neighborWest *graph.City
+		var neighborNorth *city.City
+		var neighborEast *city.City
+		var neighborSouth *city.City
+		var neighborWest *city.City
 
 		for i := 1; i < len(lineData); i++ {
 			neighborData := strings.Split(lineData[i], "=")
 			direction := neighborData[0]
 			neighborCityName := neighborData[1]
 
-			var neighborCity *graph.City
+			var neighborCity *city.City
 
 			if !cityMap.HasCity(neighborCityName) {
-				cityMap.Cities[neighborCityName] = &graph.City{Name: neighborCityName}
-				cityMap.Cities[neighborCityName].Invaders = map[int]*graph.Alien{}
+				cityMap.Cities[neighborCityName] = &city.City{Name: neighborCityName}
+				cityMap.Cities[neighborCityName].Invaders = map[int]*city.Alien{}
 			}
 
 			neighborCity = cityMap.Cities[neighborCityName]
@@ -82,14 +82,14 @@ func buildCityMap(filePath string) graph.CityMap {
 		}
 
 		if !cityMap.HasCity(cityName) {
-			cityMap.Cities[cityName] = &graph.City{
+			cityMap.Cities[cityName] = &city.City{
 				Name:  cityName,
 				North: neighborNorth,
 				East:  neighborEast,
 				South: neighborSouth,
 				West:  neighborWest,
 			}
-			cityMap.Cities[cityName].Invaders = map[int]*graph.Alien{}
+			cityMap.Cities[cityName].Invaders = map[int]*city.Alien{}
 		} else {
 			cityMap.Cities[cityName].North = neighborNorth
 			cityMap.Cities[cityName].East = neighborEast

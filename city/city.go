@@ -87,7 +87,10 @@ func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
 	}
 }
 
-func (cityMap CityMap) Invade(nbrOfAliens int) {
+/**
+Creates nbrOfAliens aliens and assigns them to random cities.
+*/
+func assignInvaders(nbrOfAliens int, cityMap CityMap) map[int]*Alien {
 	aliens := map[int]*Alien{}
 
 	for i := 0; i < nbrOfAliens; i++ {
@@ -104,7 +107,11 @@ func (cityMap CityMap) Invade(nbrOfAliens int) {
 		alien.currentCity = startingCity
 		aliens[i] = alien
 	}
+	return aliens
+}
 
+func (cityMap CityMap) Invade(nbrOfAliens int) {
+	aliens := assignInvaders(nbrOfAliens, cityMap)
 	for checkMoveCount(aliens) && len(aliens) > 1 {
 		iterateInvasion(&cityMap.Cities, &aliens)
 	}
