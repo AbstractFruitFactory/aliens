@@ -30,6 +30,9 @@ func setInfo() {
 			panic(errors.New("Invalid input. Must be an positive integer."))
 		}
 
+		cityMap := buildCityMap("./example.txt")
+		cityMap.Invade(nbrOfAliens)
+
 		return nil
 	}
 }
@@ -61,6 +64,7 @@ func buildCityMap(filePath string) graph.CityMap {
 
 			if !cityMap.HasCity(neighborCityName) {
 				cityMap.Cities[neighborCityName] = &graph.City{Name: neighborCityName}
+				cityMap.Cities[neighborCityName].Invaders = map[int]*graph.Alien{}
 			}
 
 			neighborCity = cityMap.Cities[neighborCityName]
@@ -85,6 +89,7 @@ func buildCityMap(filePath string) graph.CityMap {
 				South: neighborSouth,
 				West:  neighborWest,
 			}
+			cityMap.Cities[cityName].Invaders = map[int]*graph.Alien{}
 		} else {
 			cityMap.Cities[cityName].North = neighborNorth
 			cityMap.Cities[cityName].East = neighborEast
@@ -97,9 +102,7 @@ func buildCityMap(filePath string) graph.CityMap {
 }
 
 func main() {
-	//cityMap := buildCityMap("./example.txt")
 	setInfo()
-
 	err := app.Run(os.Args)
 	checkErr(err)
 }
