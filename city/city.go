@@ -38,6 +38,9 @@ func (cityMap CityMap) GetCity(name string) *City {
 	return nil
 }
 
+/*
+Moves an alien in a direction to another city, if present.
+*/
 func (alien *Alien) move(direction int) {
 	var destination *City
 
@@ -63,13 +66,17 @@ func (alien *Alien) move(direction int) {
 
 func checkMoveCount(aliens map[int]*Alien) bool {
 	for _, alien := range aliens {
-		if alien.nbrOfMoves < 100 {
+		if alien.nbrOfMoves < 10000 {
 			return true
 		}
 	}
 	return false
 }
 
+/*
+Moves each alien a random direction to another city (if a road in that direction exists).
+Then, checks for every city if it has more than 1 invader present. If so, that city and present invaders are destroyed.
+*/
 func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
 	for _, alien := range *aliens {
 		direction := rand.Intn(3)
@@ -87,7 +94,7 @@ func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
 	}
 }
 
-/**
+/*
 Creates nbrOfAliens aliens and assigns them to random cities.
 */
 func assignInvaders(nbrOfAliens int, cityMap CityMap) map[int]*Alien {
