@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"github.com/alexmedkex/aliens/city"
+	"github.com/alexmedkex/aliens/invasion"
 	"github.com/urfave/cli"
 	"os"
 	"strconv"
@@ -22,7 +22,7 @@ func setInfo() {
 			panic(errors.New("Invalid input. Must be a positive integer."))
 		}
 
-		cityMap := city.BuildCityMap("./example.txt")
+		cityMap := invasion.BuildCityMap("./example.txt")
 		cityMap.Invade(nbrOfAliens)
 
 		return nil

@@ -1,4 +1,4 @@
-package city
+package invasion
 
 import (
 	"bufio"
@@ -7,65 +7,6 @@ import (
 	"os"
 	"strings"
 )
-
-type CityMap struct {
-	Cities map[string]*City
-}
-
-type City struct {
-	Name     string
-	Invaders map[int]*Alien
-	North    *City
-	East     *City
-	South    *City
-	West     *City
-}
-
-type Alien struct {
-	id          int
-	currentCity *City
-	nbrOfMoves  int
-}
-
-func (cityMap CityMap) HasCity(name string) bool {
-	_, ok := cityMap.Cities[name]
-	return ok
-}
-
-func (cityMap CityMap) GetCity(name string) *City {
-	for _, city := range cityMap.Cities {
-		if city.Name == name {
-			return city
-		}
-	}
-	return nil
-}
-
-/*
-Moves an alien in a direction to another city, if present.
-*/
-func (alien *Alien) move(direction int) {
-	var destination *City
-
-	switch direction {
-	case 0:
-		destination = alien.currentCity.North
-	case 1:
-		destination = alien.currentCity.East
-	case 2:
-		destination = alien.currentCity.South
-	case 3:
-		destination = alien.currentCity.West
-
-	}
-
-	if destination != nil {
-		destination.Invaders[alien.id] = alien
-		delete(alien.currentCity.Invaders, alien.id)
-		alien.currentCity = destination
-	}
-	alien.nbrOfMoves++
-}
 
 func checkMoveCount(aliens map[int]*Alien) bool {
 	for _, alien := range aliens {
@@ -94,36 +35,6 @@ func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
 				delete(*aliens, alien.id)
 			}
 		}
-	}
-}
-
-/*
-Creates nbrOfAliens aliens and assigns them to random cities.
-*/
-func assignInvaders(nbrOfAliens int, cityMap CityMap) map[int]*Alien {
-	aliens := map[int]*Alien{}
-
-	for i := 0; i < nbrOfAliens; i++ {
-		var startingCity *City
-		alien := &Alien{i, startingCity, 0}
-
-		for k := range cityMap.Cities {
-			startingCity = cityMap.Cities[k]
-			break
-		}
-
-		startingCity.Invaders[i] = alien
-
-		alien.currentCity = startingCity
-		aliens[i] = alien
-	}
-	return aliens
-}
-
-func (cityMap CityMap) Invade(nbrOfAliens int) {
-	aliens := assignInvaders(nbrOfAliens, cityMap)
-	for checkMoveCount(aliens) && len(aliens) > 1 {
-		iterateInvasion(&cityMap.Cities, &aliens)
 	}
 }
 
