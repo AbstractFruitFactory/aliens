@@ -19,8 +19,8 @@ func checkErr(e error) {
 }
 
 func setInfo() {
-	app.Name = "Tendermint Challenge"
-	app.Usage = "Solution to the Tendermint challenge."
+	app.Name = "Alien invasion simulator"
+	app.Usage = "\n\nSimulate an alien invasion!\n1. Specify the city map in a separate .txt file in the current folder.\n2. Run the program with number of alien invaders as argument."
 	app.Version = "1.0.0"
 	app.Action = func(c *cli.Context) error {
 		input := c.Args().Get(0)
