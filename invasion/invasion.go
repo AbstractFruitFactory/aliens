@@ -33,8 +33,8 @@ func BuildCityMap(filePath string) CityMap {
 
 			var neighborCity *City
 
-			if !cityMap.HasCity(neighborCityName) {
-				cityMap.AddCity(NewCity(neighborCityName))
+			if !cityMap.hasCity(neighborCityName) {
+				cityMap.addCity(NewCity(neighborCityName))
 			}
 
 			neighborCity = cityMap.Cities[neighborCityName]
@@ -51,13 +51,13 @@ func BuildCityMap(filePath string) CityMap {
 			}
 		}
 
-		if !cityMap.HasCity(cityName) {
+		if !cityMap.hasCity(cityName) {
 			newCity := NewCity(cityName)
 			newCity.North = neighborNorth
 			newCity.East = neighborEast
 			newCity.South = neighborSouth
 			newCity.West = neighborWest
-			cityMap.AddCity(newCity)
+			cityMap.addCity(newCity)
 		} else {
 			cityMap.Cities[cityName].North = neighborNorth
 			cityMap.Cities[cityName].East = neighborEast
