@@ -12,6 +12,10 @@ Run the project:
 
 `./aliens <numberOfAliens> <nameOfMapFile>`
 
+e.g 
+
+`./aliens 5 example.txt`
+
 Run all tests:
 
 `go test ./... -v`
