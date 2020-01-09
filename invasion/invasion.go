@@ -2,27 +2,19 @@ package invasion
 
 import (
 	"bufio"
-	"fmt"
-	"math/rand"
 	"os"
 	"strings"
-	"time"
 )
 
-var randomGenerator *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-func SetRandomSeed(seed int64) {
-	randomSource := rand.NewSource(seed)
-	randomGenerator = rand.New(randomSource)
-}
-
+/*
+Builds a city map from a .txt file, located at filePath.
+*/
 func BuildCityMap(filePath string) CityMap {
 	file, err := os.Open(filePath)
 	checkErr(err)
 	defer file.Close()
 
-	cityMap := CityMap{}
-	cityMap.Cities = map[string]*City{}
+	cityMap := NewCityMap()
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
@@ -42,7 +34,7 @@ func BuildCityMap(filePath string) CityMap {
 			var neighborCity *City
 
 			if !cityMap.HasCity(neighborCityName) {
-				cityMap.Cities[neighborCityName] = NewCity(neighborCityName)
+				cityMap.AddCity(NewCity(neighborCityName))
 			}
 
 			neighborCity = cityMap.Cities[neighborCityName]
@@ -65,7 +57,7 @@ func BuildCityMap(filePath string) CityMap {
 			newCity.East = neighborEast
 			newCity.South = neighborSouth
 			newCity.West = neighborWest
-			cityMap.Cities[cityName] = newCity
+			cityMap.AddCity(newCity)
 		} else {
 			cityMap.Cities[cityName].North = neighborNorth
 			cityMap.Cities[cityName].East = neighborEast
@@ -84,27 +76,6 @@ func checkMoveCount(aliens map[int]*Alien) bool {
 		}
 	}
 	return false
-}
-
-/*
-Moves each alien a random direction to another city (if a road in that direction exists).
-Then, checks for every city if it has more than 1 invader present. If so, that city and present invaders are destroyed.
-*/
-func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
-	for _, alien := range *aliens {
-		randNbr := randomGenerator.Intn(3)
-		alien.move(Direction(randNbr))
-	}
-
-	for _, city := range *cities {
-		if len(city.Invaders) > 1 {
-			fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, city.Invaders)
-			delete(*cities, city.Name)
-			for _, alien := range city.Invaders {
-				delete(*aliens, alien.id)
-			}
-		}
-	}
 }
 
 func checkErr(e error) {
