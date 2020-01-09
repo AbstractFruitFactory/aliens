@@ -4,10 +4,9 @@ import (
 	"testing"
 )
 
-var cityMap = BuildCityMap("../test_input/test1.txt")
-
 func TestAssignInvaders(t *testing.T) {
-	SetRandomSeed(1)
+	cityMap := setup()
+
 	aliens := cityMap.assignInvaders(2)
 
 	expectedCities := map[int]string{
@@ -24,7 +23,8 @@ func TestAssignInvaders(t *testing.T) {
 }
 
 func TestIterateInvasion(t *testing.T) {
-	SetRandomSeed(1)
+	cityMap := setup()
+
 	aliens := cityMap.assignInvaders(5)
 	expectedCities := map[int]string{
 		1: "Bee",
@@ -56,5 +56,13 @@ func TestIterateInvasion(t *testing.T) {
 			t.Errorf("Expected currentCity: %v, got currentCity: %v.", expectedCities[i], alien.currentCity.Name)
 		}
 	}
+}
 
+func setup() CityMap {
+	SetRandomSeed(1)
+	return newCity()
+}
+
+func newCity() CityMap {
+	return BuildCityMap("../test_input/test1.txt")
 }
