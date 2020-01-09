@@ -8,3 +8,7 @@ type City struct {
 	South    *City
 	West     *City
 }
+
+func NewCity(name string) *City {
+	return &City{Name: name, Invaders: map[int]*Alien{}}
+}
