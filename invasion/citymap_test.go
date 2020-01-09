@@ -10,8 +10,8 @@ func TestAssignInvaders(t *testing.T) {
 	aliens := cityMap.assignInvaders(2)
 
 	expectedCities := map[int]string{
-		0: "Baz",
-		1: "Shiz",
+		0: "Bar",
+		1: "Waz",
 	}
 
 	for i := range aliens {
@@ -27,8 +27,8 @@ func TestIterateInvasion(t *testing.T) {
 
 	aliens := cityMap.assignInvaders(5)
 	expectedCities := map[int]string{
-		1: "Bee",
-		2: "Waz",
+		1: "Baz",
+		2: "Semllyz",
 		3: "Pellio",
 	}
 
@@ -40,7 +40,7 @@ func TestIterateInvasion(t *testing.T) {
 	nbrOfAliensAfter := aliens.count()
 	nbrOfCitiesAfter := len(cityMap.CityNames)
 
-	if nbrOfAliensAfter != nbrOfAliensBefore-2 {
+	if nbrOfAliensAfter != nbrOfAliensBefore-3 {
 		t.Errorf("Expected %v number of aliens after iteration, got %v.", nbrOfAliensBefore-2, nbrOfAliensAfter)
 	}
 
