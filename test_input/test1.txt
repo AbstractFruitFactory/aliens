@@ -1,0 +1,5 @@
+Foo north=Bar west=Baz south=Qu-ux
+Bar south=Foo west=Bee north=Semllyz
+Shiz south=Waz east=Bee
+Waz east=Baz south=Semllyz
+Semllyz east=Karkcha south=Pellio
