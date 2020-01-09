@@ -55,8 +55,8 @@ func (cityMap *CityMap) Invade(nbrOfAliens int) {
 /*
 Creates nbrOfAliens aliens and assigns them to random cities.
 */
-func (cityMap *CityMap) assignInvaders(nbrOfAliens int) map[int]*Alien {
-	aliens := map[int]*Alien{}
+func (cityMap *CityMap) assignInvaders(nbrOfAliens int) Aliens {
+	aliens := NewAliensList(nbrOfAliens)
 
 	for i := 0; i < nbrOfAliens; i++ {
 		var startingCity *City
@@ -68,17 +68,21 @@ func (cityMap *CityMap) assignInvaders(nbrOfAliens int) map[int]*Alien {
 		startingCity.Invaders[i] = alien
 
 		alien.currentCity = startingCity
-		aliens[i] = alien
+		aliens = aliens.add(alien)
 	}
+
 	return aliens
 }
 
 /*
 Moves each alien a random direction to another city (if a road in that direction exists).
-Then, checks for every city if it has more than 1 invader present. If so, that city and present invaders are destroyed.
+Then, checks for every city if it has more than 1 invader present. If so, that city and its invaders are removed.
 */
-func (cityMap *CityMap) iterateInvasion(aliens *map[int]*Alien) {
+func (cityMap *CityMap) iterateInvasion(aliens *Aliens) {
 	for _, alien := range *aliens {
+		if alien == nil {
+			continue
+		}
 		randNbr := randomGenerator.Intn(3)
 		alien.move(Direction(randNbr))
 	}
@@ -89,7 +93,7 @@ func (cityMap *CityMap) iterateInvasion(aliens *map[int]*Alien) {
 			cityMap.RemoveCity(city.Name)
 
 			for _, alien := range city.Invaders {
-				delete(*aliens, alien.id)
+				*aliens = aliens.remove(alien.id)
 			}
 		}
 	}

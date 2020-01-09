@@ -69,10 +69,12 @@ func BuildCityMap(filePath string) CityMap {
 	return cityMap
 }
 
-func checkMoveCount(aliens map[int]*Alien) bool {
+func checkMoveCount(aliens Aliens) bool {
 	for _, alien := range aliens {
-		if alien.nbrOfMoves < 10000 {
-			return true
+		if alien != nil {
+			if alien.nbrOfMoves < 10000 {
+				return true
+			}
 		}
 	}
 	return false
