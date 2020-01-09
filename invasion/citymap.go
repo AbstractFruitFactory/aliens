@@ -109,6 +109,9 @@ func (cityMap *CityMap) iterateInvasion(aliens *Aliens) {
 	}
 }
 
+/*
+Logs the map in its current state, ignoring all destroyed cities.
+*/
 func (cityMap CityMap) printMap() {
 	var currentCity *City
 

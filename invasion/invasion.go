@@ -8,6 +8,9 @@ import (
 
 /*
 Builds a city map from a .txt file, located at filePath.
+
+Cities that have roads leading to other cities, i.e listed in the leftmost column in the file, are
+saved as major cities.
 */
 func BuildCityMap(filePath string) CityMap {
 	file, err := os.Open(filePath)
