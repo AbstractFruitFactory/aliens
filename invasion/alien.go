@@ -9,17 +9,17 @@ type Alien struct {
 /*
 Moves an alien in a direction to another city, if present.
 */
-func (alien *Alien) move(direction int) {
+func (alien *Alien) move(direction Direction) {
 	var destination *City
 
 	switch direction {
-	case 0:
+	case NORTH:
 		destination = alien.currentCity.North
-	case 1:
+	case EAST:
 		destination = alien.currentCity.East
-	case 2:
+	case SOUTH:
 		destination = alien.currentCity.South
-	case 3:
+	case WEST:
 		destination = alien.currentCity.West
 
 	}
