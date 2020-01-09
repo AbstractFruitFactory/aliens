@@ -9,12 +9,13 @@ import (
 var randomGenerator *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 type CityMap struct {
-	CityNames []string
-	Cities    map[string]*City
+	CityNames   []string
+	MajorCities map[string]struct{}
+	Cities      map[string]*City
 }
 
 func NewCityMap() CityMap {
-	return CityMap{[]string{}, map[string]*City{}}
+	return CityMap{[]string{}, map[string]struct{}{}, map[string]*City{}}
 }
 
 func SetRandomSeed(seed int64) {
@@ -36,9 +37,12 @@ func (cityMap *CityMap) addCity(city *City) {
 	cityMap.CityNames = append(cityMap.CityNames, city.Name)
 }
 
-func (cityMap *CityMap) removeCity(cityName string) {
+func (cityMap *CityMap) addMajorCity(name string) {
+	cityMap.MajorCities[name] = struct{}{}
+}
 
-	delete(cityMap.Cities, cityName)
+func (cityMap *CityMap) removeCity(cityName string) {
+	cityMap.Cities[cityName].Destroyed = true
 	for index, name := range cityMap.CityNames {
 		if name == cityName {
 			cityMap.CityNames = removeItem(cityMap.CityNames, index)
@@ -92,12 +96,14 @@ func (cityMap *CityMap) iterateInvasion(aliens *Aliens) {
 	}
 
 	for _, city := range cityMap.Cities {
-		if len(city.Invaders) > 1 {
-			fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, getAlienIds(city.Invaders))
-			cityMap.removeCity(city.Name)
+		if city.Destroyed != true {
+			if len(city.Invaders) > 1 {
+				fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, getAlienIds(city.Invaders))
+				cityMap.removeCity(city.Name)
 
-			for _, alien := range city.Invaders {
-				*aliens = aliens.remove(alien.id)
+				for _, alien := range city.Invaders {
+					*aliens = aliens.remove(alien.id)
+				}
 			}
 		}
 	}
@@ -106,21 +112,25 @@ func (cityMap *CityMap) iterateInvasion(aliens *Aliens) {
 func (cityMap CityMap) printMap() {
 	var currentCity *City
 
-	for _, name := range cityMap.CityNames {
+	for name, _ := range cityMap.MajorCities {
 		currentCity = cityMap.Cities[name]
+
+		if currentCity.Destroyed {
+			continue
+		}
 
 		fmt.Printf("%v ", currentCity.Name)
 
-		if currentCity.North != nil {
+		if currentCity.North != nil && !currentCity.North.Destroyed {
 			fmt.Printf("north=%v ", currentCity.North.Name)
 		}
-		if currentCity.East != nil {
+		if currentCity.East != nil && !currentCity.East.Destroyed {
 			fmt.Printf("east=%v ", currentCity.East.Name)
 		}
-		if currentCity.South != nil {
+		if currentCity.South != nil && !currentCity.South.Destroyed {
 			fmt.Printf("south=%v ", currentCity.South.Name)
 		}
-		if currentCity.West != nil {
+		if currentCity.West != nil && !currentCity.West.Destroyed {
 			fmt.Printf("west=%v ", currentCity.West.Name)
 		}
 
