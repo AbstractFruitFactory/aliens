@@ -6,36 +6,14 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
-func checkMoveCount(aliens map[int]*Alien) bool {
-	for _, alien := range aliens {
-		if alien.nbrOfMoves < 10000 {
-			return true
-		}
-	}
-	return false
-}
+var randomGenerator *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-/*
-Moves each alien a random direction to another city (if a road in that direction exists).
-Then, checks for every city if it has more than 1 invader present. If so, that city and present invaders are destroyed.
-*/
-func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
-	for _, alien := range *aliens {
-		direction := rand.Intn(3)
-		alien.move(direction)
-	}
-
-	for _, city := range *cities {
-		if len(city.Invaders) > 1 {
-			fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, city.Invaders)
-			delete(*cities, city.Name)
-			for _, alien := range city.Invaders {
-				delete(*aliens, alien.id)
-			}
-		}
-	}
+func SetRandomSeed(seed int64) {
+	randomSource := rand.NewSource(seed)
+	randomGenerator = rand.New(randomSource)
 }
 
 func BuildCityMap(filePath string) CityMap {
@@ -64,8 +42,7 @@ func BuildCityMap(filePath string) CityMap {
 			var neighborCity *City
 
 			if !cityMap.HasCity(neighborCityName) {
-				cityMap.Cities[neighborCityName] = &City{Name: neighborCityName}
-				cityMap.Cities[neighborCityName].Invaders = map[int]*Alien{}
+				cityMap.Cities[neighborCityName] = NewCity(neighborCityName)
 			}
 
 			neighborCity = cityMap.Cities[neighborCityName]
@@ -83,14 +60,12 @@ func BuildCityMap(filePath string) CityMap {
 		}
 
 		if !cityMap.HasCity(cityName) {
-			cityMap.Cities[cityName] = &City{
-				Name:  cityName,
-				North: neighborNorth,
-				East:  neighborEast,
-				South: neighborSouth,
-				West:  neighborWest,
-			}
-			cityMap.Cities[cityName].Invaders = map[int]*Alien{}
+			newCity := NewCity(cityName)
+			newCity.North = neighborNorth
+			newCity.East = neighborEast
+			newCity.South = neighborSouth
+			newCity.West = neighborWest
+			cityMap.Cities[cityName] = newCity
 		} else {
 			cityMap.Cities[cityName].North = neighborNorth
 			cityMap.Cities[cityName].East = neighborEast
@@ -100,6 +75,36 @@ func BuildCityMap(filePath string) CityMap {
 	}
 
 	return cityMap
+}
+
+func checkMoveCount(aliens map[int]*Alien) bool {
+	for _, alien := range aliens {
+		if alien.nbrOfMoves < 10000 {
+			return true
+		}
+	}
+	return false
+}
+
+/*
+Moves each alien a random direction to another city (if a road in that direction exists).
+Then, checks for every city if it has more than 1 invader present. If so, that city and present invaders are destroyed.
+*/
+func iterateInvasion(cities *map[string]*City, aliens *map[int]*Alien) {
+	for _, alien := range *aliens {
+		randNbr := randomGenerator.Intn(3)
+		alien.move(Direction(randNbr))
+	}
+
+	for _, city := range *cities {
+		if len(city.Invaders) > 1 {
+			fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, city.Invaders)
+			delete(*cities, city.Name)
+			for _, alien := range city.Invaders {
+				delete(*aliens, alien.id)
+			}
+		}
+	}
 }
 
 func checkErr(e error) {
