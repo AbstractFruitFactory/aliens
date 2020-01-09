@@ -89,7 +89,7 @@ func (cityMap *CityMap) iterateInvasion(aliens *Aliens) {
 
 	for _, city := range cityMap.Cities {
 		if len(city.Invaders) > 1 {
-			fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, city.Invaders)
+			fmt.Printf("City %s was destroyed by aliens %v!\n", city.Name, getAlienIds(city.Invaders))
 			cityMap.RemoveCity(city.Name)
 
 			for _, alien := range city.Invaders {
@@ -97,6 +97,17 @@ func (cityMap *CityMap) iterateInvasion(aliens *Aliens) {
 			}
 		}
 	}
+}
+
+func getAlienIds(aliens map[int]*Alien) []int {
+	ids := make([]int, len(aliens))
+
+	i := 0
+	for k := range aliens {
+		ids[i] = k
+		i++
+	}
+	return ids
 }
 
 func removeItem(arr []string, index int) []string {
