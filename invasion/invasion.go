@@ -20,11 +20,22 @@ func BuildCityMap(filePath string) CityMap {
 	for scanner.Scan() {
 		line := scanner.Text()
 		lineData := strings.Split(line, " ")
-		cityName := lineData[0]
+		majorCityName := lineData[0]
+
+		city := &City{}
 		var neighborNorth *City
 		var neighborEast *City
 		var neighborSouth *City
 		var neighborWest *City
+
+		if cityMap.hasCity(majorCityName) {
+			city = cityMap.getCity(majorCityName)
+		} else {
+			city = NewCity(majorCityName)
+			cityMap.addCity(city)
+		}
+
+		cityMap.addMajorCity(majorCityName)
 
 		for i := 1; i < len(lineData); i++ {
 			neighborData := strings.Split(lineData[i], "=")
@@ -33,11 +44,12 @@ func BuildCityMap(filePath string) CityMap {
 
 			var neighborCity *City
 
-			if !cityMap.hasCity(neighborCityName) {
-				cityMap.addCity(NewCity(neighborCityName))
+			if cityMap.hasCity(neighborCityName) {
+				neighborCity = cityMap.getCity(neighborCityName)
+			} else {
+				neighborCity = NewCity(neighborCityName)
+				cityMap.addCity(neighborCity)
 			}
-
-			neighborCity = cityMap.Cities[neighborCityName]
 
 			switch direction {
 			case "north":
@@ -51,19 +63,11 @@ func BuildCityMap(filePath string) CityMap {
 			}
 		}
 
-		if !cityMap.hasCity(cityName) {
-			newCity := NewCity(cityName)
-			newCity.North = neighborNorth
-			newCity.East = neighborEast
-			newCity.South = neighborSouth
-			newCity.West = neighborWest
-			cityMap.addCity(newCity)
-		} else {
-			cityMap.Cities[cityName].North = neighborNorth
-			cityMap.Cities[cityName].East = neighborEast
-			cityMap.Cities[cityName].South = neighborSouth
-			cityMap.Cities[cityName].West = neighborWest
-		}
+		city.North = neighborNorth
+		city.East = neighborEast
+		city.South = neighborSouth
+		city.West = neighborWest
+
 	}
 
 	return cityMap
