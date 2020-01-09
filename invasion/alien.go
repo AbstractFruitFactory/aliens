@@ -26,7 +26,7 @@ func (alien *Alien) move(direction Direction) {
 
 	}
 
-	if destination != nil {
+	if destination != nil && destination.Destroyed != true {
 		destination.Invaders[alien.id] = alien
 		delete(alien.currentCity.Invaders, alien.id)
 		alien.currentCity = destination
